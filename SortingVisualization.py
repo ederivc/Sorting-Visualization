@@ -2,6 +2,8 @@ import sys
 import time
 import random
 import tkinter as tk
+from datetime import datetime
+from tkinter import messagebox as mBox
 from tkinter import ttk, Canvas, Scale
 
 
@@ -9,13 +11,13 @@ class Window:
 	def __init__(self, window):
 		self.window = window
 		self.random_list = []
-		self.canvas = Canvas(self.window, bg = "white")
+		self.canvas = Canvas(self.window, bg = "#f0ffff")
 		self.canvas.place(relx = 0, relwidth =1, relheight = 0.69)
 		self.display_options()
 
 
 	def display_options(self):
-		lower_frame = tk.Frame(self.window, bg = "gray")
+		lower_frame = tk.Frame(self.window, bg = "#675d50")
 		lower_frame.place(relx = 0, rely = 0.69, relwidth = 1, relheight = 1)
 
 		algorithm_label = tk.Label(lower_frame, text = "Algorithm", width = 20)
@@ -24,7 +26,8 @@ class Window:
 		combo_algorithm = ttk.Combobox(lower_frame,
 		                            values=[
 		                                    "Bubble sort",
-		                                    "Selection sort"], 
+		                                    "Selection sort",
+											"Insertion sort"], 
 											font = (8))
 		combo_algorithm.place(x = 40, y = 60)
 		combo_algorithm.config(font = ("Helvetica"), width = 16)
@@ -57,15 +60,35 @@ class Window:
 		sort_items.place(x = 837, y = 65)
 
 
+	def speed_values(self, speed):
+		if speed == 1:
+			return 0.5
+		elif speed == 2:
+			return 0.4
+		elif speed == 3:
+			return 0.3
+		elif speed == 4:
+			return 0.2
+		else:
+			return 0.1
+
+
 	def select_algorithm(self, speed, option):
 		if option == "Bubble sort":
-			self.bubble_sort(speed)
+			self.bubble_sort(self.speed_values(speed))
 
 		elif option == "Selection sort":
-			self.selection_sort(speed)
+			self.selection_sort(self.speed_values(speed))
+
+		elif option == "Insertion sort":
+			self.insertion_sort(self.speed_values(speed))
 
 
 	def generate_info(self, min_value, max_value):
+		if min_value > max_value:
+			mBox.showerror("ERROR", "Value errors")
+			return 
+
 		self.canvas.delete("all")
 		self.random_list.clear()
 
@@ -88,7 +111,7 @@ class Window:
 		self. random_list = temp_list
 		print(self.random_list)
 
-		return self.draw_info(["gray" for i in range(len(self.random_list))])
+		return self.draw_info(["#cc5c5c" for i in range(len(self.random_list))])
 
 
 	def draw_info(self, color):
@@ -104,31 +127,54 @@ class Window:
 		self.window.update_idletasks()
 
 
-	def bubble_sort(self, speed_var):
-	    for i in range(len(self.random_list)-1):
-	        for j in range(len(self.random_list)-1):
-	            if self.random_list[j] > self.random_list[j+1]:
-	                temp = self.random_list[j]
-	                self.random_list[j] = self.random_list[j+1]
-	                self.random_list[j+1] = temp
-	                time.sleep(speed_var/10)
-	                self.draw_info(["black" if x == j or x == j+1 else "gray" for x in range(len(self.random_list))])          
+	def bubble_sort(self, speed):
+		start = datetime.now()
+		for _ in range(len(self.random_list)-1):
+			for j in range(len(self.random_list)-1):
+				if self.random_list[j] > self.random_list[j+1]:
+					temp = self.random_list[j]
+					self.random_list[j] = self.random_list[j+1]
+					self.random_list[j+1] = temp
+					time.sleep(speed)
+					self.draw_info(["#a0bbe8" if x == j else "#74b741" if x == j+1 else "#cc5c5c" for x in range(len(self.random_list))])        
 
-	    self.draw_info(["black" for i in range(len(self.random_list))])
+
+		finish = datetime.now()
+		print("Total", (finish - start))
+		self.draw_info(["#badd99" for i in range(len(self.random_list))])
 
 
 	def selection_sort(self, speed):
+		start = datetime.now()
 		for i in range(len(self.random_list)):
 			min_idx = i
 			for j in range(i+1, len(self.random_list)):
+				time.sleep(speed)
+				self.draw_info(["#99badd" if x == min_idx else "#fee11a" if x == j else "#badd99" if x < i else "#cc5c5c" for x in range(len(self.random_list))])
 				if self.random_list[min_idx] > self.random_list[j]:
-					temp = self.random_list[min_idx]
-					self.random_list[min_idx] = self.random_list[j]
-					self.random_list[j] = temp
-					time.sleep(speed/10)
-					self.draw_info(["black" if x == min_idx or x == j else "gray" for x in range(len(self.random_list))])
+					min_idx = j
 
-		self.draw_info(["black" for i in range(len(self.random_list))])
+			self.random_list[i], self.random_list[min_idx] = self.random_list[min_idx], self.random_list[i] 
+
+		finish = datetime.now()
+		print("Total", (finish - start))
+
+		self.draw_info(["#badd99" for i in range(len(self.random_list))])
+
+
+	def insertion_sort(self, speed):
+		actual = 1
+		while actual < len(self.random_list):
+			before = actual
+			while before > 0 and self.random_list[before-1] > self.random_list[before]:
+				time.sleep(speed)
+				self.draw_info(["#99badd" if x == before or x == before-1 else "#fee11a" if x == actual else "#badd99" 
+				if x < actual else "#cc5c5c" for x in range(len(self.random_list))])
+				self.random_list[before], self.random_list[before-1] = self.random_list[before-1], self.random_list[before]
+				before -= 1
+			actual += 1
+
+		self.draw_info(["#badd99" for i in range(len(self.random_list))])
 
 
 if __name__ == "__main__":
