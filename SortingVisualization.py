@@ -1,8 +1,9 @@
 import time
 import random
 import tkinter as tk
+from prueba import bubble_sort, selection_sort, insertion_sort, cocktail_sort, shell_sort
 from tkinter import messagebox as mBox
-from tkinter import ttk, Canvas, Scale
+from tkinter import ttk, Canvas, Scale, PhotoImage, Image
 
 
 class Window:
@@ -12,6 +13,9 @@ class Window:
 		self.color = "black"
 		self.items_id = []
 		self.comp_value = 0
+		self.dark_image = PhotoImage(file = "/home/ederivc/Documents/Python/dark_mode.png")
+		self.dark_image = self.dark_image.zoom(1)
+		self.dark_image = self.dark_image.subsample(30)
 		self.canvas = Canvas(self.window, bg = "#f0ffff")
 		self.canvas.place(relx = 0, relwidth =1, relheight = 0.80)
 		self.display_options()
@@ -37,26 +41,23 @@ class Window:
 		combo_algorithm.config(font = ("Helvetica"), width = 16)
 		combo_algorithm.current(0)
 
-		dark_button = tk.Button(lower_frame, text = "Dark", command = lambda: self.dark_screen(lower_frame))
-		dark_button.place(x = 40, y = 90)
-
 		min_value = tk.Label(lower_frame, text = "Min. Value", width = 20)
 		min_value.place(x = 240, y = 20)
 
 		min_value_number = tk.Scale(lower_frame, from_=1, to=1000, orient=tk.HORIZONTAL, width = 5)
-		min_value_number.place(x = 270, y = 60)
+		min_value_number.place(x = 260, y = 60)
 
 		max_value = tk.Label(lower_frame, text = "Max. Value", width = 20)
 		max_value.place(x = 440, y = 20)
 
 		max_value_number = tk.Scale(lower_frame, from_=1, to=1000, orient=tk.HORIZONTAL, width = 5)
-		max_value_number.place(x = 470, y = 60)
+		max_value_number.place(x = 460, y = 60)
 
 		speed = tk.Label(lower_frame, text = "Speed", width = 19)
 		speed.place(x = 640, y = 20)
 
 		speed_var = tk.Scale(lower_frame, from_=1, to=5, orient=tk.HORIZONTAL, width = 5)
-		speed_var.place(x = 670, y = 60)
+		speed_var.place(x = 660, y = 60)
 
 		new_info_btn = tk.Button(lower_frame, text = "Generate graph", activebackground = "#468499",
 		width = 12, command = lambda: self.generate_info(min_value_number.get(), max_value_number.get(), 
@@ -71,10 +72,14 @@ class Window:
 		command = self.delete_all)
 		delete_btn.place(x = 825, y = 90)
 
+		img_label = tk.Label(lower_frame, background = "white", image = self.dark_image)
+		img_label.place(x = 950, y = 45)
+		img_label.bind('<Button-1>', lambda x: self.dark_screen(lower_frame))
 
-	def comparisons_info(self):
+
+	def comparisons_info(self, comp_value):
 		self.canvas.create_text(20,500,anchor = "sw", text = "Comparisons", fill = self.color)
-		self.canvas.create_text(130, 500,anchor = "sw", text = self.comp_value, fill = self.color)
+		self.canvas.create_text(130, 500,anchor = "sw", text = comp_value, fill = self.color)
 
 
 	def speed_values(self, speed):
@@ -92,9 +97,9 @@ class Window:
 
 	def dark_screen(self, lower_frame):
 		if self.color == "black":
-			self.canvas.update_idletasks()
 			self.canvas.config(bg = "#666666")
 			lower_frame.config(bg = "#333333")
+			self.canvas.update_idletasks()
 			self.color = "white"
 		else:
 			self.canvas.config(bg = "#f0ffff")
@@ -105,28 +110,33 @@ class Window:
 
 	def select_algorithm(self, speed, option):
 		if option == "Bubble sort":
-			self.bubble_sort(self.speed_values(speed))
+			bubble_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
+			self.final_animation)
 
 		elif option == "Selection sort":
-			self.selection_sort(self.speed_values(speed))
+			selection_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
+			self.final_animation)
 
 		elif option == "Insertion sort":
-			self.insertion_sort(self.speed_values(speed))
+			insertion_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
+			self.final_animation)
 
 		elif option == "Cocktail shaker sort":
-			self.cocktail_sort(self.speed_values(speed))
+			cocktail_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
+			self.final_animation)
 
 		elif option == "Shell sort":
-			self.shell_sort(self.speed_values(speed))
+			shell_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
+			self.final_animation)
 
 		elif option == "Merge sort":
 			self.merge_sort(self.random_list , self.speed_values(speed))
 
 
-	def final_animation(self):
+	def final_animation(self, comp_value):
 		for x in range(len(self.random_list)):
 			time.sleep(0.03)
-			self.draw_info(["#ff7f50" if i <= x else "#4ca3dd" if i == x+1 else "#badd99" for i in range(len(self.random_list))])
+			self.draw_info(comp_value, ["#ff7f50" if i <= x else "#4ca3dd" if i == x+1 else "#badd99" for i in range(len(self.random_list))])
 			#self.draw_info(["#f3d3a5" if i <= x else "#4e2c7f" if i == x+1 else "#badd99" fothemer i in range(len(self.random_list))])
 
 
@@ -139,8 +149,6 @@ class Window:
 			self.generate_small_info(min_value, max_value)
 			return"""
 
-		self.comp_value = 0
-		self.comparisons_info()
 		self.canvas.delete("all")
 		if min_value > max_value:
 			mBox.showerror("ERROR", "Value error")
@@ -168,12 +176,12 @@ class Window:
 		self. random_list = temp_list
 		print(self.random_list)
 
-		return self.draw_info(["#ffa500" for i in range(len(self.random_list))])
+		return self.draw_info(0, ["#ffa500" for i in range(len(self.random_list))])
 
 
-	def draw_info(self, color):
+	def draw_info(self, comp_value, color):
 		self.canvas.delete("all")
-		self.comparisons_info()
+		self.comparisons_info(comp_value)
 		x = 20
 		y = 50
 		for key, value in enumerate(self.random_list):
@@ -270,9 +278,6 @@ class Window:
 
 		i = j = k = 0
 
-		self.draw_info(self.color_array(len(arr), i, mid, j))
-		time.sleep(0.3)
-
 		while i < len(left) and j < len(right):
 			if left[i] < right[j]:
 				arr[k] = left[i]
@@ -292,25 +297,9 @@ class Window:
 			j+= 1
 			k+= 1
 
-		self.draw_info(["blue" if x >= i and x <= j else "white" for x in range(len(arr))])
-		time.sleep(0.3)
-
 		print(arr)
 
 
-	def color_array(self, lenght, left, mid, right):
-		color_array = []
-
-		for i in range(lenght):
-			if i>= left and i<= right:
-				if i>=left and i <= mid:
-					color_array.append("yellow")
-				else:
-					color_array.append("pink")
-			else:
-				color_array.append("white")
-
-		return color_array
 
 	"""def merge_sort(self, arr):
 		if len(arr) > 1: 
@@ -387,7 +376,7 @@ class Window:
 		print(arr)"""
 
 
-	def bubble_sort(self, speed):
+	"""def bubble_sort(self, speed):
 		cont = 1
 		for _ in range(len(self.random_list)-1):
 			for j in range(len(self.random_list)-1):
@@ -402,96 +391,8 @@ class Window:
 
 			cont += 1
 
-		self.final_animation()
+		self.final_animation()"""
 
-
-	def selection_sort(self, speed):
-		for i in range(len(self.random_list)):
-			min_idx = i
-			for j in range(i+1, len(self.random_list)):
-				self.comp_value += 1
-				time.sleep(speed)
-				self.draw_info(["#99badd" if x == min_idx else "#ec7788" if x == j else "#badd99" if x < i else "#ffa500" for x in range(len(self.random_list))])
-				if self.random_list[min_idx] > self.random_list[j]:
-					min_idx = j
-
-			self.random_list[i], self.random_list[min_idx] = self.random_list[min_idx], self.random_list[i]
-
-		self.final_animation()
-
-
-	def insertion_sort(self, speed):
-		actual = 1
-		while actual < len(self.random_list):
-			before = actual
-			while before > 0 and self.random_list[before-1] > self.random_list[before]:
-				self.comp_value += 1
-				time.sleep(speed)
-				self.draw_info(["#99badd" if x == before else "#772a3d" if x == before-1 else "#ec7788" if x == actual else "#badd99"
-				if x < actual else "#ffa500" for x in range(len(self.random_list))])
-				self.random_list[before], self.random_list[before-1] = self.random_list[before-1], self.random_list[before]
-				before -= 1
-			actual += 1
-
-		self.final_animation()
-
-
-	def cocktail_sort(self, speed):
-		cont = 0
-		temp = 1
-		left = 1
-		right = len(self.random_list) - 1
-		verif = True
-		while verif == True:
-			verif = False
-			for i in range(right):
-				if self.random_list[i] > self.random_list[i+1]:
-					self.comp_value += 1
-					self.random_list[i], self.random_list[i+1] = self.random_list[i+1], self.random_list[i]
-					time.sleep(speed)
-					self.draw_info(["#99badd" if x == i else "#772a3d" if x == i+1 else "#ec7788" if x > len(self.random_list) - temp 
-					or x < cont else "#ffa500" for x in range(len(self.random_list))])
-					verif = True
-
-			verif = False
-			temp += 1
-
-			for i in range(right, left, -1):
-				if self.random_list[i] < self.random_list[i-1]:
-					self.comp_value += 1
-					self.random_list[i], self.random_list[i-1] = self.random_list[i-1], self.random_list[i]
-					time.sleep(speed)
-					self.draw_info(["#99badd" if x == i else "#772a3d" if x == i-1 else "#ec7788" if x > len(self.random_list) - temp
-					or x < cont else "#ffa500" for x in range(len(self.random_list))])
-					verif = True
-
-			if verif == False:
-				break
-
-			left += 1
-			cont += 1
-
-		self.final_animation()
-	
-
-	def shell_sort(self, speed):
-		div = len(self.random_list) // 2
-		while div > 0:
-			for i in range(div, len(self.random_list)):
-				actual = self.random_list[i]
-
-				comparison = i
-				while comparison >= div and self.random_list[comparison - div] > actual:
-					time.sleep(speed)
-					self.draw_info(["#99badd" if x == comparison - div else "#772a3d" if x == comparison else
-					"#ffa500" for x in range(len(self.random_list))])
-					self.random_list[comparison], self.random_list[comparison - div] =  self.random_list[comparison - div], self.random_list[comparison]
-					comparison -= div
-					self.comp_value += 1
-
-			div = div // 2
-
-		self.final_animation()
 
 
 if __name__ == "__main__":
@@ -505,3 +406,7 @@ if __name__ == "__main__":
 	app = Window(window)
 
 	window.mainloop()
+
+
+
+
