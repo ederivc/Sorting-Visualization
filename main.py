@@ -1,7 +1,5 @@
 import tkinter as tk
-from SortingVisualization import Window
-
-
+from GUI import Window
 
 if __name__ == "__main__":
     window = tk.Tk()
