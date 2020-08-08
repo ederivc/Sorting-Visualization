@@ -1,7 +1,7 @@
 import time
 import random
 import tkinter as tk
-from prueba import bubble_sort, selection_sort, insertion_sort, cocktail_sort, shell_sort
+from Algorithms import *
 from tkinter import messagebox as mBox
 from tkinter import ttk, Canvas, Scale, PhotoImage, Image
 
@@ -150,12 +150,13 @@ class Window:
 			return"""
 
 		self.canvas.delete("all")
+		self.random_list.clear()
 		if min_value > max_value:
 			mBox.showerror("ERROR", "Value error")
 			return
 
-		self.canvas.delete("all")
-		self.random_list.clear()
+		#self.canvas.delete("all")
+		#self.random_list.clear()
 
 		for i in range(24):
 			number = random.randint(min_value, max_value)
@@ -193,74 +194,19 @@ class Window:
 		self.window.update_idletasks()
 
 
-	def generate_small_info(self, min_value, max_value):
-		self.items_id.clear()
-		self.comp_value = 0
-		self.comparisons_info()
+	def draw_small_info(self, color, arr):
 		self.canvas.delete("all")
-		if min_value > max_value:
-			mBox.showerror("ERROR", "Value error")
-			return
+		#self.comparisons_info()
+		x = 20
+		y = 50
+		for key, value in enumerate(arr): #x0, y0, x1, y1
 
-		self.canvas.delete("all")
-		self.random_list.clear()
-
-		for _ in range(8):
-			number = random.randint(min_value, max_value)
-			self.random_list.append(number)
-		
-		return self.draw_small_info(["#ffa500" for i in range(len(self.random_list))])
-
-
-	def draw_small_info(self, color):
-		self.canvas.delete("all")
-		self.comparisons_info()
-		x = 300
-		y = 10
-		for value in self.random_list: #x0, y0, x1, y1
-
-			id_item = self.canvas.create_rectangle(x, y, x + 50, y + 50, fill="blue")
-			id_text = self.canvas.create_text(x+18,50,anchor = "sw", text = value, fill = "black")
-			self.items_id.append((value, id_item, id_text))
-
-			x += 50
+			self.canvas.create_rectangle(x, value[1], y, 10,fill= color[key])
+			self.canvas.create_text(x,value[1]+20,anchor = "sw", text = value[0], fill = self.color)
+			x += 40
+			y += 40
 
 		self.window.update_idletasks()
-
-
-
-	def small_animation(self, arr, ident):
-		if len(arr) >= 1 and ident == "L":
-			for key, value in enumerate(arr):
-				if len(arr) == 4:
-					self.canvas.move(value[1], -50, 30)
-					self.canvas.move(value[2], -50, 30)
-
-				elif len(arr) == 2:
-					self.canvas.move(value[1], -25, 30)
-					self.canvas.move(value[2], -25, 30)
-
-				self.canvas.move(value[1], -5, 30)
-				self.canvas.move(value[2], -5, 30)
-
-			self.window.update_idletasks()
-			time.sleep(0.4)
-
-		if len(arr) >= 1 and ident == "R":
-			for key, value in enumerate(arr):
-				if len(arr) == 4:
-					self.canvas.move(value[1], 50, 30)
-					self.canvas.move(value[2], 50, 30)
-
-				elif len(arr) == 2:
-					self.canvas.move(value[1], 25, 30)
-					self.canvas.move(value[2], 25, 30)
-
-				self.canvas.move(value[1], 5, 30)
-				self.canvas.move(value[2], 5, 30)
-
-			self.window.update_idletasks()
-			time.sleep(0.4)
 
 
 	def merge_sort(self, arr, speed):
@@ -271,11 +217,13 @@ class Window:
 		left = arr[:mid]
 		right = arr[mid:]
 		self.merge_sort(left, speed)
-		self.merge_sort(right, speed)
-			
-		#self.draw_info(self.color_array(len(arr), left, mid, right))
 		#time.sleep(0.3)
-
+		#self.draw_small_info(["red" for i in range(len(left))], left)
+		self.merge_sort(right, speed)
+		#time.sleep(0.3)
+		#self.draw_small_info(["blue" for i in range(len(right))], right)
+		#self.draw_small_info(["green" if i <= len(left) else "yellow" for i in range(len(self.random_list))], self.random_list)
+		#time.sleep(1)
 		i = j = k = 0
 
 		while i < len(left) and j < len(right):
@@ -287,6 +235,11 @@ class Window:
 				j += 1
 			k += 1
 
+			time.sleep(0.3)
+			count = len(right)
+			#self.draw_small_info(["blue" for i in range(len(arr))], arr)
+			self.draw_small_info(["red" if i <= len(left) else "green" if i <= j else "blue" for i in range(len(self.random_list))], self.random_list)
+
 		while i < len(left):
 			arr[k] = left[i]
 			i+= 1
@@ -297,102 +250,9 @@ class Window:
 			j+= 1
 			k+= 1
 
-		print(arr)
-
-
-
-	"""def merge_sort(self, arr):
-		if len(arr) > 1: 
-			mid = len(arr)//2 
-			L = arr[:mid] # Dividing the array elements  
-			R = arr[mid:] # into 2 halves 
-
-			
-			self.small_animation(L, "L")
-			self.small_animation(R, "R")
-
-			self.merge_sort(L)
-			self.merge_sort(R) 
-			
-		
-			i = j = k = 0
-				
-			while i < len(L) and j < len(R): 
-				if L[i] < R[j]:
-					for key, value in enumerate(L):
-						for key2, value2 in enumerate(R):
-							self.canvas.move(value[1], -5, -30) 
-							self.canvas.move(value[2], -5, -30) 
-							self.canvas.move(value2[1], -10, -30) 
-							self.canvas.move(value2[2], -10, -30) 
-							break
-						break
-					self.window.update_idletasks()	
-					arr[k] = L[i] 
-					i+= 1
-				else: 
-					for key, value in enumerate(R):
-						for key2, value2 in enumerate(L):
-							self.canvas.move(value[1], -10, -30) 
-							self.canvas.move(value[2], -10, -30) 
-							self.canvas.move(value2[1], -5, -30) 
-							self.canvas.move(value2[2], -5, -30) 
-							break
-						break
-					self.window.update_idletasks()
-					arr[k] = R[j] 
-					j+= 1
-				k+= 1
-				
-			
-			while i < len(L): 
-				for key, value in enumerate(L):
-						self.canvas.move(value[1], 50, 5) 
-						self.canvas.move(value[2], 50, 5) 
-						break
-				self.window.update_idletasks()
-				arr[k] = L[i] 
-				i+= 1
-				k+= 1
-				
-			while j < len(R): 
-				for key, value in enumerate(R):
-						self.canvas.move(value[1], -50, 5) 
-						self.canvas.move(value[2], -50, 5) 
-						break
-				self.window.update_idletasks()
-				arr[k] = R[j] 
-				j+= 1
-				k+= 1
-
-			for key, value in enumerate(L):
-				self.canvas.move(value[1], -50, 30)
-				self.canvas.move(value[2], -50, 30)
-
-			self.window.update_idletasks()
-			time.sleep(0.4)
-			
-
-		print(arr)"""
-
-
-	"""def bubble_sort(self, speed):
-		cont = 1
-		for _ in range(len(self.random_list)-1):
-			for j in range(len(self.random_list)-1):
-				if self.random_list[j] > self.random_list[j+1]:
-					temp = self.random_list[j]
-					self.random_list[j] = self.random_list[j+1]
-					self.random_list[j+1] = temp
-					self.comp_value += 1
-					time.sleep(speed)
-					self.draw_info(["#a0bbe8" if x == j else "#ec7788" if x == j+1 else "#6897bb" if x > len(self.random_list) - cont
-					else "#ffa500" for x in range(len(self.random_list))])
-
-			cont += 1
-
-		self.final_animation()"""
-
+		count = len(right)
+		time.sleep(0.3)
+		self.draw_small_info(["red" if i <= len(left) else "green" if count else "blue" for i in range(len(self.random_list))], self.random_list)
 
 
 if __name__ == "__main__":
