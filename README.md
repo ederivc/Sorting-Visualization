@@ -1,1 +1,1 @@
-# Algorithm-Visualization
+# Algorithm Visualization
