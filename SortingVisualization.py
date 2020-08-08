@@ -11,8 +11,6 @@ class Window:
 		self.window = window
 		self.random_list = []
 		self.color = "black"
-		self.items_id = []
-		self.comp_value = 0
 		self.dark_image = PhotoImage(file = "/home/ederivc/Documents/Python/dark_mode.png")
 		self.dark_image = self.dark_image.zoom(1)
 		self.dark_image = self.dark_image.subsample(30)
@@ -253,20 +251,3 @@ class Window:
 		count = len(right)
 		time.sleep(0.3)
 		self.draw_small_info(["red" if i <= len(left) else "green" if count else "blue" for i in range(len(self.random_list))], self.random_list)
-
-
-if __name__ == "__main__":
-	window = tk.Tk()
-
-	width = 1000
-	height = 650
-	window.minsize(width, height)
-	window.title("Algorithm visualization")
-
-	app = Window(window)
-
-	window.mainloop()
-
-
-
-
