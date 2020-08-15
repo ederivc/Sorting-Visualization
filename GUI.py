@@ -70,7 +70,7 @@ class Window:
 		delete_btn.place(x = 825, y = 90)
 
 		img_label = tk.Label(lower_frame, background = "white", image = self.dark_image)
-		img_label.place(x = 950, y = 45)
+		img_label.place(x = 955, y = 45)
 		img_label.bind('<Button-1>', lambda x: self.dark_screen(lower_frame))
 
 
