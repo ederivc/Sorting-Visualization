@@ -32,8 +32,7 @@ class Window:
 		                                    "Selection sort",
 											"Insertion sort",
 											"Cocktail shaker sort",
-											"Shell sort",
-											"Merge sort"],
+											"Shell sort"],
 											font = (8))
 		combo_algorithm.place(x = 40, y = 60)
 		combo_algorithm.config(font = ("Helvetica"), width = 16)
