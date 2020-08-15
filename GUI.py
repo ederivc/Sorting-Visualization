@@ -11,8 +11,6 @@ class Window:
 		self.window = window
 		self.random_list = []
 		self.color = "black"
-		self.items_id = []
-		self.comp_value = 0
 		self.dark_image = PhotoImage(file = "dark_mode.png")
 		self.dark_image = self.dark_image.zoom(1)
 		self.dark_image = self.dark_image.subsample(30)
@@ -129,9 +127,6 @@ class Window:
 			shell_sort(self.speed_values(speed), self.random_list, 0, self.draw_info,
 			self.final_animation)
 
-		elif option == "Merge sort":
-			self.merge_sort(self.random_list , self.speed_values(speed))
-
 
 	def final_animation(self, comp_value):
 		for x in range(len(self.random_list)):
@@ -188,65 +183,6 @@ class Window:
 		self.window.update_idletasks()
 
 
-	def draw_small_info(self, color, arr):
-		self.canvas.delete("all")
-		#self.comparisons_info()
-		x = 20
-		y = 50
-		for key, value in enumerate(arr): #x0, y0, x1, y1
-
-			self.canvas.create_rectangle(x, value[1], y, 10,fill= color[key])
-			self.canvas.create_text(x,value[1]+20,anchor = "sw", text = value[0], fill = self.color)
-			x += 40
-			y += 40
-
-		self.window.update_idletasks()
-
-
-	def merge_sort(self, arr, speed):
-		if len(arr) <= 1:
-			return arr
-
-		mid = int(len(arr) / 2)
-		left = arr[:mid]
-		right = arr[mid:]
-		self.merge_sort(left, speed)
-		#time.sleep(0.3)
-		#self.draw_small_info(["red" for i in range(len(left))], left)
-		self.merge_sort(right, speed)
-		#time.sleep(0.3)
-		#self.draw_small_info(["blue" for i in range(len(right))], right)
-		#self.draw_small_info(["green" if i <= len(left) else "yellow" for i in range(len(self.random_list))], self.random_list)
-		#time.sleep(1)
-		i = j = k = 0
-
-		while i < len(left) and j < len(right):
-			if left[i] < right[j]:
-				arr[k] = left[i]
-				i += 1
-			else:
-				arr[k] = right[j]
-				j += 1
-			k += 1
-
-			time.sleep(0.3)
-			count = len(right)
-			#self.draw_small_info(["blue" for i in range(len(arr))], arr)
-			self.draw_small_info(["red" if i <= len(left) else "green" if i <= j else "blue" for i in range(len(self.random_list))], self.random_list)
-
-		while i < len(left):
-			arr[k] = left[i]
-			i+= 1
-			k+= 1
-
-		while j < len(right): 
-			arr[k] = right[j]
-			j+= 1
-			k+= 1
-
-		
-		time.sleep(0.3)
-		self.draw_small_info(["red" if i <= len(left) else "green" if count else "blue" for i in range(len(self.random_list))], self.random_list)
 
 
 
